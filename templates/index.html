@@ -1,0 +1,76 @@
+<!DOCTYPE html>
+<html>
+ <head>
+ 	<title>Extended Playfair Cipher</title>
+ </head>
+<script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.6.4/angular.min.js"></script>
+<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css" integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm" crossorigin="anonymous">
+<link rel= "stylesheet" type= "text/css" href= "{{ url_for('static', filename='css/main.css') }}">
+<script src="{{ url_for('static', filename='js/main.js') }}"></script>
+<body>
+
+<div ng-app="myApp" ng-controller="myCtrl" class="container">
+    <div id="header">
+        <h1>Extended Playfair Cypher
+        </h1>
+	</div>
+	<ul class="nav nav-tabs" id="myTab" role="tablist">
+		<li class="nav-item">
+		  <a class="nav-link active" id="encrypt-tab" data-toggle="tab" href="#encrypt" role="tab" aria-controls="encrypt" aria-selected="true">Encryption</a>
+		</li>
+		<li class="nav-item">
+		  <a class="nav-link" id="encrypt-tab" data-toggle="tab" href="#decrypt" role="tab" aria-controls="decrypt" aria-selected="false">Decryption</a>
+		</li>
+	  </ul>
+	  <div class="tab-content" id="myTabContent">
+		<div class="tab-pane fade show active" id="encrypt" role="tabpanel" aria-labelledby="encrypt-tab">
+			<form name="form" id="post_req" method="post" ng-submit="myForm.submit()" accept-charset="utf-8" class="form-horizontal" enctype="multipart/form-data"></form>
+				<div id="input">
+					<input type="text" name="message" ng-model="myForm.message" placeholder="Enter message here" required>
+					<input type="text" name="key" ng-model="myForm.key" placeholder="Enter key here" required>
+					<input type="file" name="image" file-model="myForm.image" placeholder="Select file here" required>
+					<div class="button">
+						<button type="submit" class="btn btn-primary" ng-click="myForm.submit()">Submit</button>
+					</div>
+				</div>
+			</form>
+			<div id ="output" style="display:block;">
+			</div> 
+		</div>
+
+
+
+
+
+
+
+
+		<div class="tab-pane fade" id="decrypt" role="tabpanel" aria-labelledby="decrypt-tab">
+			<form name="form" id="post_req" method="post"  ng-submit = "Dencrypt()" accept-charset="utf-8" class="form-horizontal" enctype="multipart/form-data"></form>
+			<div id="input">
+				<!-- <input type="text" name="name" ng-model="cipherText" placeholder="Enter cipher here" required> -->
+				<input type="text" name="dencryptKey" ng-model="dencryptKey" placeholder="Enter key here" required>
+				<input type="file" name="messageImage" file-model="messageImage" placeholder="Select file here" required>
+				<div class="button">
+					<input type="submit" name="dencrypt" value="Submit" ng-click="Dencrypt()">
+				</div>
+					<div style="color:red;clear: both;">
+					<p>{{error}}</p>
+				</div>
+			</div>
+		</form>
+			<div id ="output" style="display:block;">
+				<h3> Original Message </h3>
+					<p>{{result}}</p>
+			</div>  
+		</div>
+	  </div>
+ 
+</div>
+<script src="https://code.jquery.com/jquery-3.2.1.slim.min.js" integrity="sha384-KJ3o2DKtIkvYIK3UENzmM7KCkRr/rE9/Qpg6aAZGJwFDMVNA/GpGFF93hXpG5KkN" crossorigin="anonymous"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.9/umd/popper.min.js" integrity="sha384-ApNbgh9B+Y1QKtv3Rn7W3mgPxhU9K/ScQsAP7hUibX39j7fakFPskvXusvfa0b4Q" crossorigin="anonymous"></script>
+<script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js" integrity="sha384-JZR6Spejh4U02d8jOt6vLEHfe/JQGiRRSQQxSfFWpi1MquVdAyjUar5+76PVCmYl" crossorigin="anonymous"></script>
+
+
+</body>
+</html>
