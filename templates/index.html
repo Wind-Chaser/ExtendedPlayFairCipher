@@ -29,43 +29,36 @@
 					<input type="text" name="message" ng-model="myForm.message" placeholder="Enter message here" required>
 					<input type="text" name="key" ng-model="myForm.key" placeholder="Enter key here" required>
 					<input type="file" name="image" file-model="myForm.image" placeholder="Select file here" required>
-					<div class="button">
-						<button type="submit" class="btn btn-primary" ng-click="myForm.submit()">Submit</button>
-					</div>
+					<input type="submit" value="Encrypted Image" ng-click="myForm.submit()">
 				</div>
 			</form>
-			<div id ="output" style="display:block;">
+			<div id ="outputEncrypt" style="display:none;">
+				<h4> Encrypted Image </h4>
+				<img id="imgEncrypt"/>
+				<a id="anchEncrypt" download>
+					<input type="submit" value ="Download Image"/>
+				</a>
 			</div> 
 		</div>
 
-
-
-
-
-
-
-
 		<div class="tab-pane fade" id="decrypt" role="tabpanel" aria-labelledby="decrypt-tab">
 			<form name="form" id="post_req" method="post"  ng-submit = "Dencrypt()" accept-charset="utf-8" class="form-horizontal" enctype="multipart/form-data"></form>
-			<div id="input">
-				<!-- <input type="text" name="name" ng-model="cipherText" placeholder="Enter cipher here" required> -->
-				<input type="text" name="dencryptKey" ng-model="dencryptKey" placeholder="Enter key here" required>
-				<input type="file" name="messageImage" file-model="messageImage" placeholder="Select file here" required>
-				<div class="button">
-					<input type="submit" name="dencrypt" value="Submit" ng-click="Dencrypt()">
+				<div id="input">
+					<!-- <input type="text" name="name" ng-model="cipherText" placeholder="Enter cipher here" required> -->
+					<input type="text" name="dencryptKey" ng-model="dencryptKey" placeholder="Enter key here" required>
+					<input type="file" name="messageImage" file-model="messageImage" placeholder="Select file here" required>
+					<input type="submit" name="dencrypt" value="Dencrypted Text" ng-click="Dencrypt()">
 				</div>
-					<div style="color:red;clear: both;">
-					<p>{{error}}</p>
-				</div>
-			</div>
-		</form>
-			<div id ="output" style="display:block;">
-				<h3> Original Message </h3>
-					<p>{{result}}</p>
+			</form>
+			<div id ="outputDencrypt" style="display:none;">
+				<h4> Original Message </h4>
+				<textarea rows=3 cols=52 name="text" id="dencryptMessage"> </textarea>
+				<a id="anchDownload" download="output.txt">
+				<input type="submit" value="Download In File" ng-click="Download()">
+				</a>
 			</div>  
 		</div>
-	  </div>
- 
+	</div>
 </div>
 <script src="https://code.jquery.com/jquery-3.2.1.slim.min.js" integrity="sha384-KJ3o2DKtIkvYIK3UENzmM7KCkRr/rE9/Qpg6aAZGJwFDMVNA/GpGFF93hXpG5KkN" crossorigin="anonymous"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.9/umd/popper.min.js" integrity="sha384-ApNbgh9B+Y1QKtv3Rn7W3mgPxhU9K/ScQsAP7hUibX39j7fakFPskvXusvfa0b4Q" crossorigin="anonymous"></script>

@@ -71,7 +71,7 @@ def encode(plaintext, key):
     table = generate_table(key)
     plaintext = prepare_input(plaintext)
     ciphertext = ""
-    print plaintext
+    print ("Playfair Input : " + plaintext)
     
     for char1, char2 in chunker(plaintext, 2):
         row1, col1 = divmod(table.index(char1), 8)
@@ -197,7 +197,7 @@ def encodeIntoImage(data,img):
         raise ValueError('Data is empty') 
           
     newimg = image.copy() 
-    print img.filename
+  
     encode_enc(newimg, data) 
     f = os.path.join(app.config['UPLOAD_FOLDER'], img.filename)
     newimg.save(f)  
@@ -241,12 +241,13 @@ UPLOAD_FOLDER = os.path.basename('/')
 app.config['UPLOAD_FOLDER'] = UPLOAD_FOLDER
 @app.route('/')
 def index():
-        return render_template("index.html")
+    return render_template("index.html")
 
 @app.route('/<filename>')
 def send_image(filename):
-    
-    return send_file(filename,mimetype='image/gif')
+    if filename.split('.')[1] != 'ico':
+        return send_file(filename,mimetype='image/gif')
+    return "okay"    
 
 APP_ROOT = os.path.dirname(os.path.abspath(__file__))
 @app.route('/encrypt',methods = ['POST'])
@@ -260,10 +261,8 @@ def login():
    msg = str(gg1)
    key = str(gg2)
    ans = encode(msg,key)
-   print ans
+   print ("Encrypted Message : " + ans)
    return encodeIntoImage(ans,gg3)
-
-
 
 @app.route('/dencrypt',methods = ['POST'])
 def dencrypt():
@@ -275,7 +274,7 @@ def dencrypt():
    key = str(gg2)
    text = decodeIntoText(gg3)
    ans= decode(text,key)
-   print ans 
+   print ("Dencrypted Message : " + ans) 
    msg = {"value":2,"encryptedMessage":ans}
    return jsonify(msg)
 

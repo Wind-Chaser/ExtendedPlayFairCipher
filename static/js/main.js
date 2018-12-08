@@ -16,49 +16,28 @@ app.directive('fileModel', ['$parse', function($parse){
 	}
 }]);
 
-app.service('multipartForm',['$http','$scope',function($http){
+app.service('multipartForm',['$http',function($http){
 	this.post = function(uploadUrl, data){
 		var fd = new FormData();
 		for(var key in data)
 			fd.append(key, data[key]);
-		console.log(data+'data');
 		$http.post(uploadUrl, fd, {
 			transformRequest: angular.indentity,
 			headers: { 'Content-Type': undefined }
 		}).then(function (response){
-		   console.log(response.data.value);
 		   if(response.data.value == '1') {
-			console.log("okay");
+			document.getElementById("outputEncrypt").style.display="block";
+			var shot = document.getElementById("imgEncrypt");
+			shot.setAttribute("src",response.data.imageName);
 
-			var shot = document.createElement("img");
-			shot.src = response.data.imageName;
-			document.getElementById('output').appendChild(shot);
-
-			var anc = document.createElement("a");
-			// anc.href = response.data.imageName;
-			anc.setAttribute("id","anch")
+			var anc = document.getElementById("anchEncrypt");
 			anc.setAttribute("href",response.data.imageName)
-			anc.setAttribute("download","");
-			document.getElementById('output').appendChild(anc);
 
-			var butt = document.createElement("button");
-			butt.setAttribute("value","click here to download");
-			butt.setAttribute("name","submit");
-			document.getElementById('anch').appendChild(butt);
 		   } else if(response.data.value == "2") {
-			   console.log(response.data.encryptedMessage,"okay2");
-			   $scope.result = response.data.encryptedMessage;
+			   document.getElementById("outputDencrypt").style.display="block";
+			   document.getElementById("dencryptMessage").innerHTML=response.data.encryptedMessage;
 		   }	
-			// if(response.data.numAffected){
-			// console.log("ok");
-      //       window.location="/";
-      //    }
-      //    else if(response.data.error){
-      //    	console.log(response.data.error,"jjh");
-      //    	document.getElementById("error").innerHTML="Already Registered";
-      //    	document.getElementById("error").style="color:red;";
-      //    }
-	},function (err){console.log("error encrypt")});
+		},function (err){console.log("error")});
 	}
 }]);
 
@@ -69,9 +48,9 @@ $scope.myForm.key = "";
 $scope.myForm.image = "";
 $scope.dencryptKey = "";
 $scope.messageImage = "";
+$scope.dencryptMessage = "";
 $scope.myForm.submit=function (){
 	var uploadUrl = '/encrypt';
-	console.log($scope.myForm);
 	multipartForm.post(uploadUrl,$scope.myForm);
 }
 $scope.Dencrypt=function (){
@@ -82,23 +61,10 @@ $scope.Dencrypt=function (){
 	}
 	multipartForm.post(uploadUrl,data);
 }
-}]);
 
-// var app = angular.module('myApp', []);
-// app.controller('myCtrl',['$scope','$http', function($scope,$http) {
-//   $scope.submit=function(){
-//     $scope.error="";
-//   	if($scope.value){	
-//     $http.get('/encrypt?num='+$scope.value).then(function(response){
-//         // document.getElementById('output').style="display:block;";
-//         $scope.details=response.data;
-//         console.log($scope.details);  
-//       },function(error){
-//           console.log("error in http request");
-//     });
-//    }else{
-//    	$scope.error="Please enter the value first";
-//    	document.getElementById('output').style="display:none;";
-//    }
-//   }
-// }]);
+$scope.Download = function () {
+	var input = document.getElementById("dencryptMessage").value;
+	document.getElementById("anchDownload").setAttribute('href', 'data:text/plain;charset=utf-8,' + 
+  	encodeURIComponent(input));
+  }
+}]);

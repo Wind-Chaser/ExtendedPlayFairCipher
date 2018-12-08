@@ -1,8 +1,8 @@
 .container{
  background-color: #f2f2f2;
  max-width: 600px;
- min-height: 520px;
- padding-bottom: 20px;
+ min-height: 900px;
+ padding-bottom: 40px;
  margin: auto;
  margin-top: 4%;
 }
@@ -12,22 +12,22 @@
 }
 
 #input{	
-	width:100%;
+	width:70%;
 	min-height: 200px;
-	padding-top: 2%;
-	margin-bottom:2%; 
-	border-radius: 5px;
-	margin-top: 20px;
+    border-radius: 5px;
+    margin: auto;
+    margin-left: 10%;
+	margin-top: 4%;
 }
 
-.button {
+/* .button {
     width: 60%;
     float: right;
     margin-top: 15px;
-}
+} */
 
 input[type=text]{
-    width: 60%;
+    width: 98%;
     padding: 7px;
     border: 1px solid #ccc;
     border-radius: 4px;
@@ -37,7 +37,7 @@ input[type=text]{
 }
 
 input[type=file]{
-    width: 60%;
+    width: 98%;
     border: 1px solid #ccc;
     border-radius: 4px;
     box-sizing: border-box;
@@ -46,36 +46,43 @@ input[type=file]{
 }
 
 input[type=submit] {
-    width: 34%;
     background-color: #4CAF50;
     color: white;
     padding: 8px 20px;
     border: none;
     border-radius: 4px;
     cursor: pointer;
+    float: right;
+    margin-top: 3%;
 }
 
 input[type=submit]:hover {
     background-color: #45a049;
 }
-#output {
+/* #output {
     margin: 20px;
+} */
+
+#outputEncrypt {
+    width:70%;
+    margin: auto;
+    margin-top: 10%;
+    margin-left: 11%;
 }
-#output img {
-    width: 400px;
+#outputEncrypt img {
+    width: 99%;
+    margin-bottom: 4%;
+    margin-top: 5%;
 }
-table {
-    font-family: arial, sans-serif;
-    border-collapse: collapse;
-    width: 50%;
+#outputDencrypt {
+    width:68%;
+    margin: auto;
+    margin-bottom: 3%;
+    margin-left:13%;
 }
 
-td, th {
-    border: 1px solid #000;
-    text-align: left;
-    padding: 8px;
+#outputDencrypt textarea {
+    margin-top:3px;
+    border-radius: 3px;
 }
 
-tr:nth-child(even) {
-    background-color: #dddddd;
-}
