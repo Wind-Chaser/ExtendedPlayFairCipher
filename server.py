@@ -1,5 +1,7 @@
 from flask import Flask, redirect, url_for, request,jsonify,render_template
 import numpy as np
+from numpy import array
+from numpy import reshape
 from PIL import Image
 from flask import send_file,send_from_directory
 import re
@@ -22,11 +24,7 @@ def chunker(seq, size):
 
 
 def prepare_input(dirty):
-    """
-    Prepare the plaintext by up-casing it
-    and separating repeated letters with X's
-    """
-   
+
     dirty = re.sub('\s+', '|', dirty)  
     alphabet = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789!@#$%^&*()_+={}[]|\:;\"'<>./?"
     dirty = ''.join([c.upper() for c in dirty if c in (alphabet)])
@@ -49,17 +47,12 @@ def prepare_input(dirty):
     return clean
 
 def generate_table(key):
-
-
     alphabet = "ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789!@#$%^&*()_+={}[]|\:;\"'<>./?"
-    
- 
     table = []
 
     for char in key.upper():
         if char not in table and char in alphabet:
             table.append(char)
-
 
     for char in alphabet:
         if char not in table:
@@ -67,48 +60,108 @@ def generate_table(key):
    
     return table
 
+def fence(lst, numrails):
+    fence = [[None] * len(lst) for n in range(numrails)]
+    rails = range(numrails - 1) + range(numrails - 1, 0, -1)
+    for n, x in enumerate(lst):
+        fence[rails[n % len(rails)]][n] = x
+
+    if 0: 
+        for rail in fence:
+            print ''.join('.' if c is None else str(c) for c in rail)
+
+    return [c for rail in fence for c in rail if c is not None]
+
 def encode(plaintext, key):
     table = generate_table(key)
     plaintext = prepare_input(plaintext)
+    print ("Input : " + plaintext)
     ciphertext = ""
-    print ("Playfair Input : " + plaintext)
-    
+    ttcpy = array(table)    
+    ttcpy = ttcpy.reshape((8,8))
+    ttcpy = ttcpy.transpose()
+    ttcpy = ttcpy.reshape((64,1))
+    tcpy = table
+    for i in range(64):
+        tcpy[i] = ttcpy[i][0] 
+   
+    i = 0    
     for char1, char2 in chunker(plaintext, 2):
-        row1, col1 = divmod(table.index(char1), 8)
-        row2, col2 = divmod(table.index(char2), 8)
+        if i%2==0:
+            row1, col1 = divmod(table.index(char1), 8)
+            row2, col2 = divmod(table.index(char2), 8)
 
-        if row1 == row2:
-            ciphertext += table[row1*8+(col1+1)%8]
-            ciphertext += table[row2*8+(col2+1)%8]
-        elif col1 == col2:
-            ciphertext += table[((row1+1)%8)*8+col1]
-            ciphertext += table[((row2+1)%8)*8+col2]
-        else: # rectangle
-            ciphertext += table[row1*8+col2]
-            ciphertext += table[row2*8+col1]
+            if row1 == row2:
+                ciphertext += table[row1*8+(col1+1)%8]
+                ciphertext += table[row2*8+(col2+1)%8]
+            elif col1 == col2:
+                ciphertext += table[((row1+1)%8)*8+col1]
+                ciphertext += table[((row2+1)%8)*8+col2]
+            else: # rectangle
+                ciphertext += table[row1*8+col2]
+                ciphertext += table[row2*8+col1]
+        else:       
+            row1, col1 = divmod(tcpy.index(char1), 8)
+            row2, col2 = divmod(tcpy.index(char2), 8)
 
-    return ciphertext
+            if row1 == row2:
+                ciphertext += tcpy[row1*8+(col1+1)%8]
+                ciphertext += tcpy[row2*8+(col2+1)%8]
+            elif col1 == col2:
+                ciphertext += tcpy[((row1+1)%8)*8+col1]
+                ciphertext += tcpy[((row2+1)%8)*8+col2]
+            else: # rectangle
+                ciphertext += tcpy[row1*8+col2]
+                ciphertext += tcpy[row2*8+col1]    
+        i=i+1   
+    print ("Cipher Text After Transpose : "+ ciphertext)
+    print("Cipher Text After Rail Fence(3) : " + ''.join(fence(ciphertext, 3)))                              
+    return ''.join(fence(ciphertext, 3))
 
 
 def decode(ciphertext, key):
+    rng = range(len(ciphertext))
+    pos = fence(rng, 3)
+    ctext=''.join(ciphertext[pos.index(n)] for n in rng)
+    ciphertext=ctext
     table = generate_table(key)
     plaintext = ""
-
-
+    ttcpy = array(table)    
+    ttcpy = ttcpy.reshape((8,8))
+    ttcpy = ttcpy.transpose()
+    ttcpy = ttcpy.reshape((64,1))
+    tcpy = table
+    for i in range(64):
+        tcpy[i] = ttcpy[i][0] 
+    i =0
     for char1, char2 in chunker(ciphertext, 2):
-        row1, col1 = divmod(table.index(char1), 8)
-        row2, col2 = divmod(table.index(char2), 8)
+        if i%2 ==0: 
+            row1, col1 = divmod(table.index(char1), 8)
+            row2, col2 = divmod(table.index(char2), 8)
 
-        if row1 == row2:
-            plaintext += table[row1*8+(col1-1)%8]
-            plaintext += table[row2*8+(col2-1)%8]
-        elif col1 == col2:
-            plaintext += table[((row1-1)%8)*8+col1]
-            plaintext += table[((row2-1)%8)*8+col2]
-        else: # rectangle
-            plaintext += table[row1*8+col2]
-            plaintext += table[row2*8+col1]
-            
+            if row1 == row2:
+                plaintext += table[row1*8+(col1-1)%8]
+                plaintext += table[row2*8+(col2-1)%8]
+            elif col1 == col2:
+                plaintext += table[((row1-1)%8)*8+col1]
+                plaintext += table[((row2-1)%8)*8+col2]
+            else: # rectangle
+                plaintext += table[row1*8+col2]
+                plaintext += table[row2*8+col1]
+        else:       
+            row1, col1 = divmod(table.index(char1), 8)
+            row2, col2 = divmod(table.index(char2), 8)
+
+            if row1 == row2:
+                plaintext += table[row1*8+(col1-1)%8]
+                plaintext += table[row2*8+(col2-1)%8]
+            elif col1 == col2:
+                plaintext += table[((row1-1)%8)*8+col1]
+                plaintext += table[((row2-1)%8)*8+col2]
+            else: # rectangle
+                plaintext += table[row1*8+col2]
+                plaintext += table[row2*8+col1]
+        i=i+1   
     while plaintext.find("^")!=-1 :
        plaintext =plaintext.replace("^","")
     while plaintext.find("|")!=-1:
