@@ -26,7 +26,7 @@
 		<div class="tab-pane fade show active" id="encrypt" role="tabpanel" aria-labelledby="encrypt-tab">
 			<form name="form" id="post_req" method="post" ng-submit="myForm.submit()" accept-charset="utf-8" class="form-horizontal" enctype="multipart/form-data"></form>
 				<div id="input">
-					<input type="text" name="message" ng-model="myForm.message" placeholder="Enter message here" required>
+					<textarea rows=3 cols=52 name="message" ng-model="myForm.message" placeholder="Enter message here" required></textarea>
 					<input type="text" name="key" ng-model="myForm.key" placeholder="Enter key here" required>
 					<input type="file" name="image" file-model="myForm.image" placeholder="Select file here" required>
 					<input type="submit" value="Encrypted Image" ng-click="myForm.submit()">
