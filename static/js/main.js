@@ -54,7 +54,7 @@ $scope.myForm.submit=function (){
 	multipartForm.post(uploadUrl,$scope.myForm);
 }
 $scope.Dencrypt=function (){
-	var uploadUrl = '/dencrypt';
+	var uploadUrl = '/decrypt';
 	var data = {
 		key : $scope.dencryptKey,
 		image : $scope.messageImage

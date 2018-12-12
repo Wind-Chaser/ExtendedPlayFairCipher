@@ -10,18 +10,16 @@ import itertools
 import sys
 import os
 ####+++++++++++++++++++++MAIN PROGRAM STARTS HERE++++++++++++++++++++++++++++++++++++####
-#$$$$$$$$$$$$$$$$$$$$$$$$KKKKKKKKKKKKKKKKKKDDDDDDDDDDDDDDDDDDDDDDDDD$$$$$$$$$$$$$$$$$$$$
 #________________________________________________________________________________#
 
 def chunker(seq, size):
+
     it = iter(seq)
     while True:
        chunk = tuple(itertools.islice(it, size))
        if not chunk:
            return
        yield chunk
-
-
 
 def prepare_input(dirty):
 
@@ -47,6 +45,7 @@ def prepare_input(dirty):
     return clean
 
 def generate_table(key):
+
     alphabet = "ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789!@#$%^&*()_+={}[]|\:;\"'<>./?"
     table = []
 
@@ -61,6 +60,7 @@ def generate_table(key):
     return table
 
 def fence(lst, numrails):
+
     fence = [[None] * len(lst) for n in range(numrails)]
     rails = range(numrails - 1) + range(numrails - 1, 0, -1)
     for n, x in enumerate(lst):
@@ -72,7 +72,8 @@ def fence(lst, numrails):
 
     return [c for rail in fence for c in rail if c is not None]
 
-def encode(plaintext, key):
+def encodeIntoCipherText(plaintext, key):
+
     table = generate_table(key)
     plaintext = prepare_input(plaintext)
     print ("Input : " + plaintext)
@@ -82,6 +83,7 @@ def encode(plaintext, key):
     ttcpy = ttcpy.transpose()
     ttcpy = ttcpy.reshape((64,1))
     tcpy = table
+
     for i in range(64):
         tcpy[i] = ttcpy[i][0] 
    
@@ -114,12 +116,14 @@ def encode(plaintext, key):
                 ciphertext += tcpy[row1*8+col2]
                 ciphertext += tcpy[row2*8+col1]    
         i=i+1   
+    
     print ("Cipher Text After Transpose : "+ ciphertext)
     print("Cipher Text After Rail Fence(3) : " + ''.join(fence(ciphertext, 3)))                              
     return ''.join(fence(ciphertext, 3))
 
 
-def decode(ciphertext, key):
+def decodeIntoPlainText(ciphertext, key):
+
     rng = range(len(ciphertext))
     pos = fence(rng, 3)
     ctext=''.join(ciphertext[pos.index(n)] for n in rng)
@@ -131,8 +135,10 @@ def decode(ciphertext, key):
     ttcpy = ttcpy.transpose()
     ttcpy = ttcpy.reshape((64,1))
     tcpy = table
+
     for i in range(64):
         tcpy[i] = ttcpy[i][0] 
+    
     i =0
     for char1, char2 in chunker(ciphertext, 2):
         if i%2 ==0: 
@@ -162,6 +168,7 @@ def decode(ciphertext, key):
                 plaintext += table[row1*8+col2]
                 plaintext += table[row2*8+col1]
         i=i+1   
+    
     while plaintext.find("^")!=-1 :
        plaintext =plaintext.replace("^","")
     while plaintext.find("|")!=-1:
@@ -170,37 +177,28 @@ def decode(ciphertext, key):
     
 
   
-# Convert encoding data into 8-bit binary 
-# form using ASCII value of characters 
-def genData(data): 
+ 
+def genData(data):  
+
+    newd = []    
+
+    for i in data: 
+        newd.append(format(ord(i), '08b')) 
+    return newd 
           
-        # list of binary codes 
-        # of given data 
-        newd = []  
-          
-        for i in data: 
-            newd.append(format(ord(i), '08b')) 
-        return newd 
-          
-# Pixels are modified according to the 
-# 8-bit binary data and finally returned 
+
 def modPix(pix, data): 
       
     datalist = genData(data) 
     lendata = len(datalist) 
     imdata = iter(pix) 
     
-
-    
     for i in range(lendata): 
-          
-        # Extracting 3 pixels at a time 
+        
         pix = [value for value in imdata.next()[:3] +
                                   imdata.next()[:3] +
                                   imdata.next()[:3]] 
-        #print pix                                  
-        # Pixel value should be made  
-        # odd for 1 and even for 0 
+       
         for j in range(0, 8): 
             if (datalist[i][j]=='0') and (pix[j]% 2 != 0): 
                   
@@ -209,11 +207,7 @@ def modPix(pix, data):
                       
             elif (datalist[i][j] == '1') and (pix[j] % 2 == 0): 
                 pix[j] += 1
-                  
-        # Eigh^th pixel of every set tells  
-        # whether to stop ot read further. 
-        # 0 means keep reading; 1 means the 
-        # message is over. 
+       
         if (i == lendata - 1): 
             if (pix[-1] % 2 == 0): 
                 pix[-1] += 1
@@ -227,67 +221,49 @@ def modPix(pix, data):
         yield pix[6:9] 
   
 def encode_enc(newimg, data): 
+
     w = newimg.size[0] 
     (x, y) = (0, 0) 
       
-    for pixel in modPix(newimg.getdata(), data): 
-          
-        # Putting modified pixels in the new image 
+    for pixel in modPix(newimg.getdata(), data):         
         newimg.putpixel((x, y), pixel) 
         if (x == w - 1): 
             x = 0
             y += 1
         else: 
             x += 1
-              
-# Encode data into image 
+
 def encodeIntoImage(data,img): 
-    # img = input("Enter image name(with extension): ") 
+
     image = Image.open(img, 'r') 
-      
-    # data = input("Enter data to be encoded : ") 
     if (len(data) == 0): 
-        raise ValueError('Data is empty') 
-          
-    newimg = image.copy() 
-  
+        raise ValueError('Data is empty')           
+    newimg = image.copy()   
     encode_enc(newimg, data) 
     f = os.path.join(app.config['UPLOAD_FOLDER'], img.filename)
-    newimg.save(f)  
-    # new_img_name = input("Enter the name of new image(with extension): ") 
-    # newimg.save(new_img_name, str(new_img_name.split(".")[1].upper())) 
-    #newimg.save(img.filename)
+    newimg.save(f,"png")   
     return jsonify({"value":1,"imageName":img.filename})
-  
-# Decode the data in the image 
-def decodeIntoText(img): 
-    # img.show()
-    image = Image.open(img, 'r') 
-      
+ 
+def decodeIntoText(img):  
+
+    image = Image.open(img, 'r')       
     data = '' 
     imgdata = iter(image.getdata()) 
-      
+
     while (True): 
         pixels = [value for value in imgdata.next()[:3] +
                                      imgdata.next()[:3] +
-                                     imgdata.next()[:3]] 
-        # string of binary data 
-        #print pixels
-        binstr = '' 
-          
+                                     imgdata.next()[:3]]        
+        binstr = ''           
         for i in pixels[:8]: 
             if (i % 2 == 0): 
                 binstr += '0'
             else: 
-                binstr += '1'
-                  
+                binstr += '1'                  
         data += chr(int(binstr, 2)) 
         if (pixels[-1] % 2 != 0): 
-            return data
+            return data       
 
-        
-
-#print "Email is "+ str(round((1-(pred[0]))*100))+" %  safe (percentage on the scale of 100 )\n"
 app = Flask(__name__)
 
 UPLOAD_FOLDER = os.path.basename('/')
@@ -304,33 +280,30 @@ def send_image(filename):
 
 APP_ROOT = os.path.dirname(os.path.abspath(__file__))
 @app.route('/encrypt',methods = ['POST'])
-def login():
+def encrypt():
    if request.method == 'POST': 
-        gg1 = (request.form['message'])
-        gg2 = (request.form['key'])
-        gg3 = (request.files['image'])
-       # image = Image.open(gg3, 'r') 
-	#print content
-   msg = str(gg1)
-   key = str(gg2)
-   ans = encode(msg,key)
-   print ("Encrypted Message : " + ans)
-   return encodeIntoImage(ans,gg3)
+        message = (request.form['message'])
+        key = (request.form['key'])
+        image = (request.files['image'])
+       
+   msg = str(message)
+   key = str(key)
+   cipherText = encodeIntoCipherText(msg,key)
+   print ("Encrypted Message : " + cipherText)
+   return encodeIntoImage(cipherText,image)
 
-@app.route('/dencrypt',methods = ['POST'])
-def dencrypt():
+@app.route('/decrypt',methods = ['POST'])
+def decrypt():
    if request.method == 'POST': 
-        gg2 = (request.form['key'])
-        gg3 = (request.files['image'])
-       # image = Image.open(gg3, 'r') 
-	#print content
-   key = str(gg2)
-   text = decodeIntoText(gg3)
-   ans= decode(text,key)
+        key = (request.form['key'])
+        encryptedImage = (request.files['image'])
+       
+   key = str(key)
+   cipherText = decodeIntoText(encryptedImage)
+   ans = decodeIntoPlainText(cipherText,key)
    print ("Dencrypted Message : " + ans) 
    msg = {"value":2,"encryptedMessage":ans}
    return jsonify(msg)
-
 
 if __name__ == '__main__':
    app.run(debug = True)
